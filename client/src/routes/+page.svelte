@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import "../app.css";
-    import Icon from "@iconify/svelte";
     import { env } from '$env/dynamic/public';
 
     import FoodCard from './FoodCard.svelte';
@@ -37,11 +36,11 @@
             <p>Loading menu items...</p>
         </div>
     {:else}
-        <div class="food-grid">
-            {#each meals as meal}
-                <FoodCard {meal} />
-            {/each}
-        </div>
+    <div class="food-grid">
+        {#each meals as meal}
+           <FoodCard {meal}/>
+        {/each}
+    </div>
     {/if}
 
     {#if meals && Array.isArray(meals) && meals.length === 0}

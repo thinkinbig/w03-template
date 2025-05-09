@@ -10,12 +10,25 @@
     // Use environment variable for API URL with fallback to localhost
     let baseUrl = env.PUBLIC_API_URL || "http://localhost:8080";
 
-    // For more information on runes and reactivity, see: https://svelte.dev/docs/svelte/what-are-runes
-    let meals: Meal[] = $state([]);
+    let meals: Meal[] = [];
 
     // Fetch data once on component mount
     onMount(async () => {
-       // TODO Fetch meals from the API running on the baseUrl
+        try {
+            const response = await fetch(`${baseUrl}/mensa-garching/today`);
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            const data = await response.json();
+            if (Array.isArray(data)) {
+                meals = data;
+            } else {
+                meals = [];
+                console.error("API response is not an array:", data);
+            }
+        } catch (error) {
+            console.error("There was a problem with the fetch operation:", error);
+        }
     });
 </script>
 
@@ -30,10 +43,14 @@
             <p>Loading menu items...</p>
         </div>
     {:else}
-       <!-- TODO add food-grid here -->
+        <div class="food-grid">
+            {#each meals as meal}
+                <FoodCard {meal} />
+            {/each}
+        </div>
     {/if}
 
-    {#if meals.length === 0 && meals.length > 0}
+    {#if meals && Array.isArray(meals) && meals.length === 0}
         <div class="no-results">
             No menu items match your filters. Try changing your selection.
         </div>

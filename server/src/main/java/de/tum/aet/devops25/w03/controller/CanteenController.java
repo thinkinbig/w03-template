@@ -25,7 +25,16 @@ public class CanteenController {
      */
     @GetMapping("/{canteenName}/today")
     public ResponseEntity<List<Dish>> getTodayMeals(@PathVariable String canteenName) {
-        // TODO: Implement the logic to fetch today's meals for the specified canteen using the CanteenService
-        return ResponseEntity.ok(List.of());
+        try {
+            List<Dish> dishes = canteenService.getTodayMeals(canteenName);
+            if (dishes.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(dishes);
+        } catch (Exception e) {
+            // Log the exception or handle it as appropriate
+            System.err.println("Error fetching meals: " + e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
     }
 }

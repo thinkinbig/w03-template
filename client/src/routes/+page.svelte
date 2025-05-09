@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import "../app.css";
-    import Icon from "@iconify/svelte";
     import { env } from '$env/dynamic/public';
 
     import FoodCard from './FoodCard.svelte';
@@ -13,9 +12,16 @@
     // For more information on runes and reactivity, see: https://svelte.dev/docs/svelte/what-are-runes
     let meals: Meal[] = $state([]);
 
+    async function fetchMeals() {
+        const res = await fetch(`${baseUrl}/mensa-garching/today`);
+        if (res.ok) {
+            meals = await res.json();
+        }
+    } 
     // Fetch data once on component mount
     onMount(async () => {
        // TODO Fetch meals from the API running on the baseUrl
+       await fetchMeals();
     });
 </script>
 
@@ -30,10 +36,14 @@
             <p>Loading menu items...</p>
         </div>
     {:else}
-       <!-- TODO add food-grid here -->
+    <div class="food-grid">
+        {#each meals as meal}
+           <FoodCard {meal}/>
+        {/each}
+    </div>
     {/if}
 
-    {#if meals.length === 0 && meals.length > 0}
+    {#if meals && Array.isArray(meals) && meals.length === 0}
         <div class="no-results">
             No menu items match your filters. Try changing your selection.
         </div>

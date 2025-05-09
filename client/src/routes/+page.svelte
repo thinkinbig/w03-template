@@ -10,25 +10,19 @@
     // Use environment variable for API URL with fallback to localhost
     let baseUrl = env.PUBLIC_API_URL || "http://localhost:8080";
 
-    let meals: Meal[] = [];
+    // For more information on runes and reactivity, see: https://svelte.dev/docs/svelte/what-are-runes
+    let meals: Meal[] = $state([]);
 
+    async function fetchMeals() {
+        const res = await fetch(`${baseUrl}/mensa-garching/today`);
+        if (res.ok) {
+            meals = await res.json();
+        }
+    } 
     // Fetch data once on component mount
     onMount(async () => {
-        try {
-            const response = await fetch(`${baseUrl}/mensa-garching/today`);
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            const data = await response.json();
-            if (Array.isArray(data)) {
-                meals = data;
-            } else {
-                meals = [];
-                console.error("API response is not an array:", data);
-            }
-        } catch (error) {
-            console.error("There was a problem with the fetch operation:", error);
-        }
+       // TODO Fetch meals from the API running on the baseUrl
+       await fetchMeals();
     });
 </script>
 

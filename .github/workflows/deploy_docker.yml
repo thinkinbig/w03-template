@@ -39,6 +39,7 @@ jobs:
           source: "./docker-compose.prod.yml"
           target: /home/${{ vars.VM_USERNAME }}
 
+
       - name: SSH to VM and Create .env.prod
         uses: appleboy/ssh-action@v1.0.3
         with:
